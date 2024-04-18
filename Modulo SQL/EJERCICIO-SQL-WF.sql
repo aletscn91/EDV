@@ -141,5 +141,84 @@ from sales_by_customer
 
 
 
-*/
+13.
 
+select
+	employee_id,
+	first_name, 
+	last_name, 
+	hire_date, 
+	rank() over (order by hire_date asc) as Rank  
+from employees e 
+order by Rank
+
+
+
+14.
+
+select
+	product_id,
+	product_name,
+	unit_price,
+	rank() over (order by unit_price desc) as Rank
+from products p 
+order by rank
+
+***lag***
+15.
+
+select 
+	order_id,
+	product_id,
+	quantity,
+	lag(quantity,1) over (order by order_id, product_id)
+from order_details od 
+order by 1,2
+
+
+16.
+select 
+	order_id,
+	order_date,
+	customer_id,
+	lag(order_date,1) over (order by customer_id,order_date) as lastorderdate
+from orders o 
+order by 3,1
+
+17.
+
+select
+	product_id,
+	product_name ,
+	unit_price ,
+	lag(unit_price,1) over (order by product_id,unit_price) as lastunitprice,
+	unit_price - lag(unit_price,1) over (order by product_id,unit_price) as pricedifference
+from products p 	
+
+18.
+
+select
+	product_name ,
+	unit_price ,
+	lead(unit_price,1) over (order by product_id ,unit_price) as nextprice
+from products p
+order by product_id 
+
+
+19.
+
+with sales as (
+select distinct
+	c.category_name,
+	sum(od.unit_price * od.quantity) over (partition by c.category_name) totalsales
+	from order_details od 
+inner join products p on p.product_id = od.product_id 
+inner join categories c on c.category_id  = p.category_id 
+order by 1
+)
+select
+	*,
+	lead(totalsales,1) over (order by category_name)
+from sales
+
+*/
